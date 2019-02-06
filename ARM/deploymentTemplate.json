@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "accountName": {
+            "defaultValue": "customvision",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "predictionAccountName": "[concat(parameters('accountName'), '_prediction')]",
+        "trainingAccountName": "[concat(parameters('accountName'), '_training')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "sku": {
+                "name": "S0"
+            },
+            "kind": "CustomVision.Prediction",
+            "name": "[variables('predictionAccountName')]",
+            "apiVersion": "2016-02-01-preview",
+            "location": "southcentralus",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "sku": {
+                "name": "S0"
+            },
+            "kind": "CustomVision.Training",
+            "name": "[variables('trainingAccountName')]",
+            "apiVersion": "2016-02-01-preview",
+            "location": "southcentralus",
+            "properties": {}
+        }
+    ],
+    "outputs": {
+        "trainingKey": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('trainingAccountName')), '2016-02-01-preview').key1]"
+        },
+        "predictionKey": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('predictionAccountName')), '2016-02-01-preview').key1]"
+        }
+    }
+}
